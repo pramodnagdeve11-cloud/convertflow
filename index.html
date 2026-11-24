@@ -1,0 +1,1376 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DocuFlow Studio - Universal All-in-One PDF, Image & Office Suite</title>
+  <meta name="description" content="100% Client-side universal file processing studio. PDF to Word, Excel, PPT, Text, HTML; Office & Images to PDF; Merge, Split, Rotate, Compress, Organize, Protect, Watermark; Image converter & compressor; MP4 to Audio. No server uploads.">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+            },
+            accent: {
+              500: '#06b6d4',
+              600: '#0891b2',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <!-- Google Fonts: Inter & Hind -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Hind:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Core Libraries: jsPDF, PDF.js, PDF-Lib, JSZip, Tesseract.js, SheetJS, Mammoth, PptxGenJS, Confetti -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 min-h-screen flex flex-col font-['Inter','Hind',sans-serif] transition-colors duration-200">
+
+  <!-- Ambient Glow Background -->
+  <div class="fixed inset-0 overflow-hidden pointer-events-none z-0 opacity-40 dark:opacity-20">
+    <div class="absolute -top-40 -left-40 w-96 h-96 bg-brand-500 rounded-full blur-[128px]"></div>
+    <div class="absolute top-1/3 -right-40 w-96 h-96 bg-accent-500 rounded-full blur-[128px]"></div>
+    <div class="absolute -bottom-40 left-1/3 w-96 h-96 bg-purple-500 rounded-full blur-[128px]"></div>
+  </div>
+
+  <!-- Header -->
+  <header class="sticky top-0 z-50 backdrop-blur-xl bg-white/85 dark:bg-slate-900/85 border-b border-slate-200/80 dark:border-slate-800/80 shadow-xs">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      
+      <!-- Brand Logo -->
+      <div class="flex items-center space-x-3 cursor-pointer" onclick="showToolsGrid()">
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-brand-600 via-indigo-500 to-accent-500 flex items-center justify-center text-white shadow-md shadow-brand-500/25">
+          <i class="fa-solid fa-shapes text-lg"></i>
+        </div>
+        <div class="flex items-center space-x-2">
+          <span class="text-xl sm:text-2xl font-black tracking-tight bg-gradient-to-r from-brand-600 via-indigo-500 to-accent-600 bg-clip-text text-transparent">
+            DocuFlow
+          </span>
+          <span class="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+            Studio
+          </span>
+        </div>
+      </div>
+
+      <!-- Center: Privacy Pill -->
+      <div class="hidden md:flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-50/80 dark:bg-emerald-950/40 border border-emerald-200/80 dark:border-emerald-800/60 text-emerald-700 dark:text-emerald-300 text-xs font-semibold">
+        <i class="fa-solid fa-shield-halved text-emerald-500"></i>
+        <span data-i18n="badge_privacy">100% Private - No files leave your device</span>
+      </div>
+
+      <!-- Right Controls: Tools Grid Button, Language Selector & Theme Toggle -->
+      <div class="flex items-center space-x-2 sm:space-x-3">
+        
+        <!-- All Tools Button -->
+        <button onclick="showToolsGrid()" class="px-3 py-1.5 rounded-xl bg-brand-50 hover:bg-brand-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-brand-600 dark:text-brand-400 text-xs font-bold transition flex items-center space-x-1.5 border border-brand-200/60 dark:border-slate-700">
+          <i class="fa-solid fa-grid-2"></i>
+          <span data-i18n="nav_all_tools">All Tools</span>
+        </button>
+
+        <!-- Multi-Language Selector Dropdown -->
+        <div class="relative">
+          <button id="langMenuBtn" onclick="toggleLangMenu()" class="flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-bold transition">
+            <i class="fa-solid fa-globe text-brand-600 dark:text-brand-400"></i>
+            <span id="currentLangLabel">English</span>
+            <i class="fa-solid fa-chevron-down text-[10px] text-slate-400"></i>
+          </button>
+
+          <!-- Dropdown Menu -->
+          <div id="langDropdown" class="hidden absolute right-0 mt-1 w-44 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-xl py-1.5 z-50 text-xs font-medium">
+            <button onclick="setLanguage('en')" class="w-full px-3 py-2 text-left hover:bg-brand-50 dark:hover:bg-slate-800 flex items-center justify-between text-slate-700 dark:text-slate-200">
+              <span>🇬🇧 English</span>
+              <span class="text-[10px] text-brand-600 font-bold">EN</span>
+            </button>
+            <button onclick="setLanguage('hi')" class="w-full px-3 py-2 text-left hover:bg-brand-50 dark:hover:bg-slate-800 flex items-center justify-between text-slate-700 dark:text-slate-200">
+              <span>🇮🇳 हिन्दी (Hindi)</span>
+              <span class="text-[10px] text-brand-600 font-bold">HI</span>
+            </button>
+            <button onclick="setLanguage('es')" class="w-full px-3 py-2 text-left hover:bg-brand-50 dark:hover:bg-slate-800 flex items-center justify-between text-slate-700 dark:text-slate-200">
+              <span>🇪🇸 Español</span>
+              <span class="text-[10px] text-brand-600 font-bold">ES</span>
+            </button>
+            <button onclick="setLanguage('fr')" class="w-full px-3 py-2 text-left hover:bg-brand-50 dark:hover:bg-slate-800 flex items-center justify-between text-slate-700 dark:text-slate-200">
+              <span>🇫🇷 Français</span>
+              <span class="text-[10px] text-brand-600 font-bold">FR</span>
+            </button>
+            <button onclick="setLanguage('de')" class="w-full px-3 py-2 text-left hover:bg-brand-50 dark:hover:bg-slate-800 flex items-center justify-between text-slate-700 dark:text-slate-200">
+              <span>🇩🇪 Deutsch</span>
+              <span class="text-[10px] text-brand-600 font-bold">DE</span>
+            </button>
+            <button onclick="setLanguage('ar')" class="w-full px-3 py-2 text-left hover:bg-brand-50 dark:hover:bg-slate-800 flex items-center justify-between text-slate-700 dark:text-slate-200">
+              <span>🇸🇦 العربية</span>
+              <span class="text-[10px] text-brand-600 font-bold">AR</span>
+            </button>
+            <button onclick="setLanguage('ja')" class="w-full px-3 py-2 text-left hover:bg-brand-50 dark:hover:bg-slate-800 flex items-center justify-between text-slate-700 dark:text-slate-200">
+              <span>🇯🇵 日本語</span>
+              <span class="text-[10px] text-brand-600 font-bold">JA</span>
+            </button>
+            <button onclick="setLanguage('pt')" class="w-full px-3 py-2 text-left hover:bg-brand-50 dark:hover:bg-slate-800 flex items-center justify-between text-slate-700 dark:text-slate-200">
+              <span>🇧🇷 Português</span>
+              <span class="text-[10px] text-brand-600 font-bold">PT</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Theme Toggle Button -->
+        <button id="themeToggleBtn" aria-label="Toggle Dark Mode" class="w-9 h-9 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center justify-center hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition">
+          <i class="fa-solid fa-moon dark:hidden"></i>
+          <i class="fa-solid fa-sun hidden dark:inline text-amber-400"></i>
+        </button>
+
+      </div>
+    </div>
+
+    <!-- Category Filter Bar -->
+    <div class="border-t border-slate-200/80 dark:border-slate-800/80 bg-slate-50/70 dark:bg-slate-900/70 overflow-x-auto scrollbar-none">
+      <div class="max-w-7xl mx-auto px-4 flex space-x-1.5 sm:space-x-2 py-2">
+        <button onclick="filterCategory('all')" id="cat-btn-all" class="cat-pill active px-3.5 py-1.5 rounded-full text-xs font-bold transition">
+          <i class="fa-solid fa-asterisk mr-1"></i> <span data-i18n="cat_all">All Tools</span>
+        </button>
+        <button onclick="filterCategory('pdf-to')" id="cat-btn-pdf-to" class="cat-pill px-3.5 py-1.5 rounded-full text-xs font-semibold text-slate-600 dark:text-slate-400 transition">
+          <i class="fa-solid fa-file-export mr-1 text-blue-500"></i> <span data-i18n="cat_pdf_to">Convert from PDF</span>
+        </button>
+        <button onclick="filterCategory('to-pdf')" id="cat-btn-to-pdf" class="cat-pill px-3.5 py-1.5 rounded-full text-xs font-semibold text-slate-600 dark:text-slate-400 transition">
+          <i class="fa-solid fa-file-import mr-1 text-red-500"></i> <span data-i18n="cat_to_pdf">Convert to PDF</span>
+        </button>
+        <button onclick="filterCategory('pdf-tools')" id="cat-btn-pdf-tools" class="cat-pill px-3.5 py-1.5 rounded-full text-xs font-semibold text-slate-600 dark:text-slate-400 transition">
+          <i class="fa-solid fa-toolbox mr-1 text-indigo-500"></i> <span data-i18n="cat_pdf_tools">PDF Utilities</span>
+        </button>
+        <button onclick="filterCategory('image-tools')" id="cat-btn-image-tools" class="cat-pill px-3.5 py-1.5 rounded-full text-xs font-semibold text-slate-600 dark:text-slate-400 transition">
+          <i class="fa-solid fa-image mr-1 text-cyan-500"></i> <span data-i18n="cat_image_tools">Photo & Images</span>
+        </button>
+        <button onclick="filterCategory('media-tools')" id="cat-btn-media-tools" class="cat-pill px-3.5 py-1.5 rounded-full text-xs font-semibold text-slate-600 dark:text-slate-400 transition">
+          <i class="fa-solid fa-music mr-1 text-purple-500"></i> <span data-i18n="cat_media_tools">Media & Audio</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Area -->
+  <main class="relative z-10 flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    
+    <!-- ======================================================== -->
+    <!-- VIEW 1: ALL TOOLS INTERACTIVE HUB / GRID (Categorized)   -->
+    <!-- ======================================================== -->
+    <div id="toolsHubView" class="space-y-10">
+      
+      <!-- Hub Hero Banner -->
+      <div class="text-center max-w-3xl mx-auto space-y-3">
+        <div class="inline-flex items-center space-x-2 px-3.5 py-1 rounded-full bg-brand-50 dark:bg-brand-950/60 border border-brand-200 dark:border-brand-800/80 text-brand-700 dark:text-brand-300 text-xs font-bold shadow-2xs">
+          <i class="fa-solid fa-sparkles text-brand-500"></i>
+          <span data-i18n="hero_pill">Fast, Secure & Free Client-Side Processing</span>
+        </div>
+        <h1 class="text-3xl sm:text-5xl font-black text-slate-900 dark:text-white tracking-tight">
+          <span data-i18n="hub_title_1">Every file tool you need,</span>
+          <span class="bg-gradient-to-r from-brand-600 via-indigo-500 to-accent-600 bg-clip-text text-transparent" data-i18n="hub_title_2">100% in your browser.</span>
+        </h1>
+        <p class="text-base text-slate-600 dark:text-slate-400" data-i18n="hub_subtitle">
+          Convert, compress, edit and optimize PDFs, photos, Office documents and audio. Zero server uploads, completely private.
+        </p>
+      </div>
+
+      <!-- Quick Search Bar -->
+      <div class="max-w-md mx-auto">
+        <div class="relative">
+          <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+          <input type="text" id="toolSearchInput" onkeyup="filterToolsSearch()" placeholder="Search any tool (e.g. Word, Excel, Compress, JPG, Rotate)..." class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl pl-11 pr-4 py-3 text-sm focus:ring-2 focus:ring-brand-500 outline-none shadow-xs">
+        </div>
+      </div>
+
+      <!-- Tools Grid -->
+      <div id="toolsGridContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+        
+        <!-- Tool Card: PDF to Word -->
+        <div onclick="openToolWorkspace('pdf-to-word')" data-category="pdf-to" class="tool-card group p-5 rounded-3xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border border-slate-200/80 dark:border-slate-800/80 hover:border-blue-500/80 hover:shadow-xl transition-all cursor-pointer flex flex-col justify-between">
+          <div class="space-y-3">
+            <div class="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+              <i class="fa-solid fa-file-word"></i>
+            </div>
+            <div>
+              <h3 class="font-extrabold text-slate-900 dark:text-white text-base group-hover:text-blue-600 transition" data-i18n="tool_pdf_word_title">PDF to Word</h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed" data-i18n="tool_pdf_word_desc">Convert PDF into editable Microsoft Word (.docx) files with layout preservation and OCR.</p>
+            </div>
+          </div>
+          <div class="pt-4 flex items-center justify-between text-xs font-bold text-blue-600 dark:text-blue-400">
+            <span>Open Tool</span>
+            <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+          </div>
+        </div>
+
+        <!-- Tool Card: PDF to Excel (NEW) -->
+        <div onclick="openToolWorkspace('pdf-to-excel')" data-category="pdf-to" class="tool-card group p-5 rounded-3xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border border-slate-200/80 dark:border-slate-800/80 hover:border-emerald-500/80 hover:shadow-xl transition-all cursor-pointer flex flex-col justify-between">
+          <div class="space-y-3">
+            <div class="w-12 h-12 rounded-2xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+              <i class="fa-solid fa-file-excel"></i>
+            </div>
+            <div>
+              <h3 class="font-extrabold text-slate-900 dark:text-white text-base group-hover:text-emerald-600 transition" data-i18n="tool_pdf_excel_title">PDF to Excel</h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed" data-i18n="tool_pdf_excel_desc">Extract data and tables directly from PDF into editable Excel (.xlsx) spreadsheets.</p>
+            </div>
+          </div>
+          <div class="pt-4 flex items-center justify-between text-xs font-bold text-emerald-600 dark:text-emerald-400">
+            <span>Open Tool</span>
+            <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+          </div>
+        </div>
+
+        <!-- Tool Card: PDF to PowerPoint (NEW) -->
+        <div onclick="openToolWorkspace('pdf-to-pptx')" data-category="pdf-to" class="tool-card group p-5 rounded-3xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border border-slate-200/80 dark:border-slate-800/80 hover:border-orange-500/80 hover:shadow-xl transition-all cursor-pointer flex flex-col justify-between">
+          <div class="space-y-3">
+            <div class="w-12 h-12 rounded-2xl bg-orange-50 dark:bg-orange-950/60 text-orange-600 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+              <i class="fa-solid fa-file-powerpoint"></i>
+            </div>
+            <div>
+              <h3 class="font-extrabold text-slate-900 dark:text-white text-base group-hover:text-orange-600 transition" data-i18n="tool_pdf_pptx_title">PDF to PowerPoint</h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed" data-i18n="tool_pdf_pptx_desc">Transform your PDF pages into presentation slides (.pptx) ready for Microsoft PowerPoint.</p>
+            </div>
+          </div>
+          <div class="pt-4 flex items-center justify-between text-xs font-bold text-orange-600 dark:text-orange-400">
+            <span>Open Tool</span>
+            <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+          </div>
+        </div>
+
+        <!-- Tool Card: PDF to JPG / PNG -->
+        <div onclick="openToolWorkspace('pdf-to-jpg')" data-category="pdf-to" class="tool-card group p-5 rounded-3xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border border-slate-200/80 dark:border-slate-800/80 hover:border-teal-500/80 hover:shadow-xl transition-all cursor-pointer flex flex-col justify-between">
+          <div class="space-y-3">
+            <div class="w-12 h-12 rounded-2xl bg-teal-50 dark:bg-teal-950/60 text-teal-600 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+              <i class="fa-solid fa-file-image"></i>
+            </div>
+            <div>
+              <h3 class="font-extrabold text-slate-900 dark:text-white text-base group-hover:text-teal-600 transition" data-i18n="tool_pdf_jpg_title">PDF to JPG / PNG</h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed" data-i18n="tool_pdf_jpg_desc">Extract all PDF pages into crisp images or download the whole document as a ZIP file.</p>
+            </div>
+          </div>
+          <div class="pt-4 flex items-center justify-between text-xs font-bold text-teal-600 dark:text-teal-400">
+            <span>Open Tool</span>
+            <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+          </div>
+        </div>
+
+        <!-- Tool Card: PDF to Text / HTML (NEW) -->
+        <div onclick="openToolWorkspace('pdf-to-text')" data-category="pdf-to" class="tool-card group p-5 rounded-3xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border border-slate-200/80 dark:border-slate-800/80 hover:border-slate-500/80 hover:shadow-xl transition-all cursor-pointer flex flex-col justify-between">
+          <div class="space-y-3">
+            <div class="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+              <i class="fa-solid fa-file-code"></i>
+            </div>
+            <div>
+              <h3 class="font-extrabold text-slate-900 dark:text-white text-base group-hover:text-slate-600 transition" data-i18n="tool_pdf_text_title">PDF to Text / HTML</h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed" data-i18n="tool_pdf_text_desc">Extract clean plain text (.txt) or web HTML from any PDF file with 1 click.</p>
+            </div>
+          </div>
+          <div class="pt-4 flex items-center justify-between text-xs font-bold text-slate-600 dark:text-slate-400">
+            <span>Open Tool</span>
+            <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+          </div>
+        </div>
+
+        <!-- Tool Card: JPG / Images to PDF -->
+        <div onclick="openToolWorkspace('jpg-to-pdf')" data-category="to-pdf" class="tool-card group p-5 rounded-3xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border border-slate-200/80 dark:border-slate-800/80 hover:border-red-500/80 hover:shadow-xl transition-all cursor-pointer flex flex-col justify-between">
+          <div class="space-y-3">
+            <div class="w-12 h-12 rounded-2xl bg-red-50 dark:bg-red-950/60 text-red-600 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+              <i class="fa-solid fa-file-pdf"></i>
+            </div>
+            <div>
+              <h3 class="font-extrabold text-slate-900 dark:text-white text-base group-hover:text-red-600 transition" data-i18n="tool_jpg_pdf_title">JPG / PNG to PDF</h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed" data-i18n="tool_jpg_pdf_desc">Merge multiple photos into PDF with margins, orientation, and custom KB/MB target limits.</p>
+            </div>
+          </div>
+          <div class="pt-4 flex items-center justify-between text-xs font-bold text-red-600 dark:text-red-400">
+            <span>Open Tool</span>
+            <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+          </div>
+        </div>
+
+        <!-- Tool Card: Word / Office / Text to PDF (NEW) -->
+        <div onclick="openToolWorkspace('office-to-pdf')" data-category="to-pdf" class="tool-card group p-5 rounded-3xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border border-slate-200/80 dark:border-slate-800/80 hover:border-indigo-500/80 hover:shadow-xl transition-all cursor-pointer flex flex-col justify-between">
+          <div class="space-y-3">
+            <div class="w-12 h-12 rounded-2xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+              <i class="fa-solid fa-file-import"></i>
+            </div>
+            <div>
+              <h3 class="font-extrabold text-slate-900 dark:text-white text-base group-hover:text-indigo-600 transition" data-i18n="tool_office_pdf_title">Word / Excel / Text to PDF</h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed" data-i18n="tool_office_pdf_desc">Convert Word documents (.docx), Excel sheets (.xlsx), or Text files into clean PDF documents.</p>
+            </div>
+          </div>
+          <div class="pt-4 flex items-center justify-between text-xs font-bold text-indigo-600 dark:text-indigo-400">
+            <span>Open Tool</span>
+            <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+          </div>
+        </div>
+
+        <!-- Tool Card: Merge PDF -->
+        <div onclick="openToolWorkspace('merge-pdf')" data-category="pdf-tools" class="tool-card group p-5 rounded-3xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border border-slate-200/80 dark:border-slate-800/80 hover:border-brand-500/80 hover:shadow-xl transition-all cursor-pointer flex flex-col justify-between">
+          <div class="space-y-3">
+            <div class="w-12 h-12 rounded-2xl bg-brand-50 dark:bg-brand-950/60 text-brand-600 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+              <i class="fa-solid fa-layer-group"></i>
+            </div>
+            <div>
+              <h3 class="font-extrabold text-slate-900 dark:text-white text-base group-hover:text-brand-600 transition" data-i18n="tool_merge_title">Merge PDF</h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed" data-i18n="tool_merge_desc">Combine multiple PDF files into a single, perfectly unified document with reordering.</p>
+            </div>
+          </div>
+          <div class="pt-4 flex items-center justify-between text-xs font-bold text-brand-600 dark:text-brand-400">
+            <span>Open Tool</span>
+            <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+          </div>
+        </div>
+
+        <!-- Tool Card: Split PDF -->
+        <div onclick="openToolWorkspace('split-pdf')" data-category="pdf-tools" class="tool-card group p-5 rounded-3xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border border-slate-200/80 dark:border-slate-800/80 hover:border-amber-500/80 hover:shadow-xl transition-all cursor-pointer flex flex-col justify-between">
+          <div class="space-y-3">
+            <div class="w-12 h-12 rounded-2xl bg-amber-50 dark:bg-amber-950/60 text-amber-600 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+              <i class="fa-solid fa-scissors"></i>
+            </div>
+            <div>
+              <h3 class="font-extrabold text-slate-900 dark:text-white text-base group-hover:text-amber-600 transition" data-i18n="tool_split_title">Split PDF</h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed" data-i18n="tool_split_desc">Extract custom page ranges (e.g. 1-3, 5) or separate specific pages from your PDF file.</p>
+            </div>
+          </div>
+          <div class="pt-4 flex items-center justify-between text-xs font-bold text-amber-600 dark:text-amber-400">
+            <span>Open Tool</span>
+            <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+          </div>
+        </div>
+
+        <!-- Tool Card: Compress PDF -->
+        <div onclick="openToolWorkspace('compress-pdf')" data-category="pdf-tools" class="tool-card group p-5 rounded-3xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border border-slate-200/80 dark:border-slate-800/80 hover:border-purple-500/80 hover:shadow-xl transition-all cursor-pointer flex flex-col justify-between">
+          <div class="space-y-3">
+            <div class="w-12 h-12 rounded-2xl bg-purple-50 dark:bg-purple-950/60 text-purple-600 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+              <i class="fa-solid fa-file-zipper"></i>
+            </div>
+            <div>
+              <h3 class="font-extrabold text-slate-900 dark:text-white text-base group-hover:text-purple-600 transition" data-i18n="tool_compress_pdf_title">Compress PDF</h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed" data-i18n="tool_compress_pdf_desc">Reduce PDF file size up to 80% with extreme, recommended, or high-quality presets.</p>
+            </div>
+          </div>
+          <div class="pt-4 flex items-center justify-between text-xs font-bold text-purple-600 dark:text-purple-400">
+            <span>Open Tool</span>
+            <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+          </div>
+        </div>
+
+        <!-- Tool Card: Organize / Delete Pages (NEW) -->
+        <div onclick="openToolWorkspace('organize-pdf')" data-category="pdf-tools" class="tool-card group p-5 rounded-3xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border border-slate-200/80 dark:border-slate-800/80 hover:border-rose-500/80 hover:shadow-xl transition-all cursor-pointer flex flex-col justify-between">
+          <div class="space-y-3">
+            <div class="w-12 h-12 rounded-2xl bg-rose-50 dark:bg-rose-950/60 text-rose-600 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+              <i class="fa-solid fa-arrows-up-down-left-right"></i>
+            </div>
+            <div>
+              <h3 class="font-extrabold text-slate-900 dark:text-white text-base group-hover:text-rose-600 transition" data-i18n="tool_organize_title">Organize & Delete Pages</h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed" data-i18n="tool_organize_desc">Visually reorder pages, delete unwanted pages, and build a re-arranged PDF document.</p>
+            </div>
+          </div>
+          <div class="pt-4 flex items-center justify-between text-xs font-bold text-rose-600 dark:text-rose-400">
+            <span>Open Tool</span>
+            <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+          </div>
+        </div>
+
+        <!-- Tool Card: Rotate PDF -->
+        <div onclick="openToolWorkspace('rotate-pdf')" data-category="pdf-tools" class="tool-card group p-5 rounded-3xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border border-slate-200/80 dark:border-slate-800/80 hover:border-teal-500/80 hover:shadow-xl transition-all cursor-pointer flex flex-col justify-between">
+          <div class="space-y-3">
+            <div class="w-12 h-12 rounded-2xl bg-teal-50 dark:bg-teal-950/60 text-teal-600 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+              <i class="fa-solid fa-rotate"></i>
+            </div>
+            <div>
+              <h3 class="font-extrabold text-slate-900 dark:text-white text-base group-hover:text-teal-600 transition" data-i18n="tool_rotate_title">Rotate PDF</h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed" data-i18n="tool_rotate_desc">Rotate individual pages or all pages 90°, 180° or 270° with instant visual preview.</p>
+            </div>
+          </div>
+          <div class="pt-4 flex items-center justify-between text-xs font-bold text-teal-600 dark:text-teal-400">
+            <span>Open Tool</span>
+            <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+          </div>
+        </div>
+
+        <!-- Tool Card: Watermark & Page Numbers -->
+        <div onclick="openToolWorkspace('watermark-pdf')" data-category="pdf-tools" class="tool-card group p-5 rounded-3xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border border-slate-200/80 dark:border-slate-800/80 hover:border-pink-500/80 hover:shadow-xl transition-all cursor-pointer flex flex-col justify-between">
+          <div class="space-y-3">
+            <div class="w-12 h-12 rounded-2xl bg-pink-50 dark:bg-pink-950/60 text-pink-600 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+              <i class="fa-solid fa-stamp"></i>
+            </div>
+            <div>
+              <h3 class="font-extrabold text-slate-900 dark:text-white text-base group-hover:text-pink-600 transition" data-i18n="tool_watermark_title">Watermark & Numbers</h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed" data-i18n="tool_watermark_desc">Add custom diagonal text stamps (CONFIDENTIAL, DRAFT) or page numbering.</p>
+            </div>
+          </div>
+          <div class="pt-4 flex items-center justify-between text-xs font-bold text-pink-600 dark:text-pink-400">
+            <span>Open Tool</span>
+            <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+          </div>
+        </div>
+
+        <!-- Tool Card: Protect / Password PDF (NEW) -->
+        <div onclick="openToolWorkspace('protect-pdf')" data-category="pdf-tools" class="tool-card group p-5 rounded-3xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border border-slate-200/80 dark:border-slate-800/80 hover:border-emerald-500/80 hover:shadow-xl transition-all cursor-pointer flex flex-col justify-between">
+          <div class="space-y-3">
+            <div class="w-12 h-12 rounded-2xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+              <i class="fa-solid fa-lock"></i>
+            </div>
+            <div>
+              <h3 class="font-extrabold text-slate-900 dark:text-white text-base group-hover:text-emerald-600 transition" data-i18n="tool_protect_title">Password Protect PDF</h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed" data-i18n="tool_protect_desc">Secure confidential PDF documents with custom encryption and password protection.</p>
+            </div>
+          </div>
+          <div class="pt-4 flex items-center justify-between text-xs font-bold text-emerald-600 dark:text-emerald-400">
+            <span>Open Tool</span>
+            <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+          </div>
+        </div>
+
+        <!-- Tool Card: Image Format Converter (JPG/PNG/WebP/BMP) (NEW) -->
+        <div onclick="openToolWorkspace('convert-image')" data-category="image-tools" class="tool-card group p-5 rounded-3xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border border-slate-200/80 dark:border-slate-800/80 hover:border-cyan-500/80 hover:shadow-xl transition-all cursor-pointer flex flex-col justify-between">
+          <div class="space-y-3">
+            <div class="w-12 h-12 rounded-2xl bg-cyan-50 dark:bg-cyan-950/60 text-cyan-600 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+              <i class="fa-solid fa-repeat"></i>
+            </div>
+            <div>
+              <h3 class="font-extrabold text-slate-900 dark:text-white text-base group-hover:text-cyan-600 transition" data-i18n="tool_img_conv_title">Image Format Converter</h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed" data-i18n="tool_img_conv_desc">Convert seamlessly between JPG, PNG, WebP, GIF, and BMP formats in seconds.</p>
+            </div>
+          </div>
+          <div class="pt-4 flex items-center justify-between text-xs font-bold text-cyan-600 dark:text-cyan-400">
+            <span>Open Tool</span>
+            <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+          </div>
+        </div>
+
+        <!-- Tool Card: Image Size Adjuster (KB/MB) -->
+        <div onclick="openToolWorkspace('compress-image')" data-category="image-tools" class="tool-card group p-5 rounded-3xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border border-slate-200/80 dark:border-slate-800/80 hover:border-brand-500/80 hover:shadow-xl transition-all cursor-pointer flex flex-col justify-between">
+          <div class="space-y-3">
+            <div class="w-12 h-12 rounded-2xl bg-indigo-50 dark:bg-indigo-950/60 text-brand-600 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+              <i class="fa-solid fa-sliders"></i>
+            </div>
+            <div>
+              <h3 class="font-extrabold text-slate-900 dark:text-white text-base group-hover:text-brand-600 transition" data-i18n="tool_compress_img_title">Image Size (KB/MB)</h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed" data-i18n="tool_compress_img_desc">Exact file size tuner for government exams, passport photos (20KB, 50KB, 100KB).</p>
+            </div>
+          </div>
+          <div class="pt-4 flex items-center justify-between text-xs font-bold text-brand-600 dark:text-brand-400">
+            <span>Open Tool</span>
+            <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+          </div>
+        </div>
+
+        <!-- Tool Card: Resize & Crop Image (NEW) -->
+        <div onclick="openToolWorkspace('resize-image')" data-category="image-tools" class="tool-card group p-5 rounded-3xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border border-slate-200/80 dark:border-slate-800/80 hover:border-violet-500/80 hover:shadow-xl transition-all cursor-pointer flex flex-col justify-between">
+          <div class="space-y-3">
+            <div class="w-12 h-12 rounded-2xl bg-violet-50 dark:bg-violet-950/60 text-violet-600 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+              <i class="fa-solid fa-crop-simple"></i>
+            </div>
+            <div>
+              <h3 class="font-extrabold text-slate-900 dark:text-white text-base group-hover:text-violet-600 transition" data-i18n="tool_resize_crop_title">Resize & Crop Image</h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed" data-i18n="tool_resize_crop_desc">Change dimensions in pixels or percentages (25%, 50%, 75%) and crop photos.</p>
+            </div>
+          </div>
+          <div class="pt-4 flex items-center justify-between text-xs font-bold text-violet-600 dark:text-violet-400">
+            <span>Open Tool</span>
+            <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+          </div>
+        </div>
+
+        <!-- Tool Card: Remove Background (NEW) -->
+        <div onclick="openToolWorkspace('remove-bg')" data-category="image-tools" class="tool-card group p-5 rounded-3xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border border-slate-200/80 dark:border-slate-800/80 hover:border-pink-500/80 hover:shadow-xl transition-all cursor-pointer flex flex-col justify-between">
+          <div class="space-y-3">
+            <div class="w-12 h-12 rounded-2xl bg-pink-50 dark:bg-pink-950/60 text-pink-600 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+              <i class="fa-solid fa-wand-magic-sparkles"></i>
+            </div>
+            <div>
+              <h3 class="font-extrabold text-slate-900 dark:text-white text-base group-hover:text-pink-600 transition" data-i18n="tool_remove_bg_title">Remove Background</h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed" data-i18n="tool_remove_bg_desc">Make white or solid backgrounds transparent (perfect for signatures and logos).</p>
+            </div>
+          </div>
+          <div class="pt-4 flex items-center justify-between text-xs font-bold text-pink-600 dark:text-pink-400">
+            <span>Open Tool</span>
+            <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+          </div>
+        </div>
+
+        <!-- Tool Card: Video to Audio MP4 to MP3/WAV (NEW) -->
+        <div onclick="openToolWorkspace('video-to-audio')" data-category="media-tools" class="tool-card group p-5 rounded-3xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border border-slate-200/80 dark:border-slate-800/80 hover:border-fuchsia-500/80 hover:shadow-xl transition-all cursor-pointer flex flex-col justify-between">
+          <div class="space-y-3">
+            <div class="w-12 h-12 rounded-2xl bg-fuchsia-50 dark:bg-fuchsia-950/60 text-fuchsia-600 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+              <i class="fa-solid fa-music"></i>
+            </div>
+            <div>
+              <h3 class="font-extrabold text-slate-900 dark:text-white text-base group-hover:text-fuchsia-600 transition" data-i18n="tool_video_audio_title">Video to Audio</h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed" data-i18n="tool_video_audio_desc">Extract high-quality audio tracks directly from MP4 and WebM video files.</p>
+            </div>
+          </div>
+          <div class="pt-4 flex items-center justify-between text-xs font-bold text-fuchsia-600 dark:text-fuchsia-400">
+            <span>Open Tool</span>
+            <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- VIEW 2: ACTIVE TOOL WORKSPACE CONTAINER                  -->
+    <!-- ======================================================== -->
+    <div id="activeToolWorkspace" class="hidden space-y-6">
+      
+      <!-- Back to All Tools Bar -->
+      <div class="flex items-center justify-between">
+        <button onclick="showToolsGrid()" class="inline-flex items-center space-x-2 text-xs font-bold text-brand-600 dark:text-brand-400 hover:text-brand-700 px-3 py-1.5 rounded-xl bg-white/70 dark:bg-slate-900/70 border border-slate-200 dark:border-slate-800 shadow-2xs transition">
+          <i class="fa-solid fa-arrow-left"></i>
+          <span data-i18n="btn_back_to_tools">Back to All Tools</span>
+        </button>
+        <span id="currentWorkspaceBadge" class="text-xs font-bold px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300"></span>
+      </div>
+
+      <!-- Workspace Title Header -->
+      <div class="text-center space-y-1">
+        <h2 id="workspaceTitle" class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white"></h2>
+        <p id="workspaceSubtitle" class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 max-w-xl mx-auto"></p>
+      </div>
+
+      <!-- DYNAMIC TAB PANELS -->
+      <div id="workspacePanelsContainer">
+        
+        <!-- 1. PDF TO WORD PANEL -->
+        <div id="panel-pdf-to-word" class="tool-panel hidden">
+          <!-- Dropzone and Options -->
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="lg:col-span-2 space-y-6">
+              <div id="wordDropzone" class="dropzone relative border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-blue-500 rounded-3xl p-10 text-center bg-white/70 dark:bg-slate-900/70 backdrop-blur-sm transition-all cursor-pointer shadow-sm group">
+                <input type="file" id="wordFileInput" accept="application/pdf" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                <div class="space-y-4 pointer-events-none">
+                  <div class="w-16 h-16 mx-auto rounded-2xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 flex items-center justify-center text-3xl group-hover:scale-105 transition-transform">
+                    <i class="fa-solid fa-file-word"></i>
+                  </div>
+                  <div>
+                    <p class="text-lg font-bold text-slate-800 dark:text-slate-200">
+                      <span data-i18n="dropzone_drag">Drop PDF file here or</span> <span class="text-blue-600 underline">browse</span>
+                    </p>
+                    <p class="text-xs text-slate-500 mt-1" data-i18n="word_dropzone_sub">Generates 100% editable Microsoft Word (.docx) files</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Preview Card -->
+              <div id="wordDocPreviewCard" class="hidden bg-white/80 dark:bg-slate-900/80 backdrop-blur-md rounded-3xl p-5 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+                <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
+                  <span id="wordPdfName" class="font-bold text-sm truncate max-w-md"></span>
+                  <button onclick="clearWordPdf()" class="text-xs text-red-600 border border-red-200 px-3 py-1 rounded-xl" data-i18n="btn_choose_another">Change File</button>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div class="sm:col-span-1 bg-slate-100 dark:bg-slate-800/60 rounded-xl p-2 flex items-center justify-center h-48">
+                    <canvas id="wordThumbCanvas" class="max-h-full max-w-full rounded shadow-xs"></canvas>
+                  </div>
+                  <div class="sm:col-span-2 bg-slate-50 dark:bg-slate-800/40 rounded-xl p-3 flex flex-col justify-between">
+                    <div>
+                      <span class="text-xs font-bold text-slate-500 uppercase">Text Preview:</span>
+                      <div id="wordTextSnippet" class="text-xs font-mono max-h-28 overflow-y-auto bg-white dark:bg-slate-900 p-2 rounded-lg border mt-1 leading-relaxed"></div>
+                    </div>
+                    <span id="wordWordsCount" class="text-[11px] font-bold text-emerald-600 mt-2"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Settings Sidebar -->
+            <div class="space-y-4">
+              <div class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-md rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm space-y-5">
+                <h3 class="font-bold text-base" data-i18n="title_word_settings">Word Settings</h3>
+                <div class="space-y-2">
+                  <label class="text-xs font-semibold text-slate-600 dark:text-slate-400">Mode</label>
+                  <label class="flex items-center space-x-2 text-xs font-semibold cursor-pointer">
+                    <input type="radio" name="wordOcrMode" value="standard" checked class="text-blue-600">
+                    <span data-i18n="mode_standard_title">Standard (No OCR) - Recommended</span>
+                  </label>
+                  <label class="flex items-center space-x-2 text-xs font-semibold cursor-pointer">
+                    <input type="radio" name="wordOcrMode" value="ocr" class="text-blue-600">
+                    <span data-i18n="mode_ocr_title">Smart OCR (Scanned Docs)</span>
+                  </label>
+                </div>
+                <div>
+                  <label class="text-xs font-semibold text-slate-600 dark:text-slate-400" data-i18n="label_output_filename">Filename</label>
+                  <input type="text" id="wordOutputFilename" value="converted" class="w-full bg-slate-50 dark:bg-slate-800 border rounded-xl px-3 py-2 text-sm mt-1">
+                </div>
+                <button id="convertWordBtn" onclick="processPdfToWord()" disabled class="w-full py-3.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-md disabled:opacity-50 flex items-center justify-center space-x-2">
+                  <i class="fa-solid fa-file-word"></i>
+                  <span data-i18n="btn_convert_word">Convert to Word (.docx)</span>
+                </button>
+                <div id="wordProgressBox" class="hidden space-y-2">
+                  <div class="w-full bg-slate-200 dark:bg-slate-700 h-2 rounded-full overflow-hidden">
+                    <div id="wordProgressBar" class="bg-blue-600 h-full w-0 transition-all"></div>
+                  </div>
+                </div>
+                <div id="wordSuccessBox" class="hidden p-4 rounded-2xl bg-blue-50 dark:bg-blue-950/50 border border-blue-200 text-center space-y-3">
+                  <p class="font-bold text-blue-700 text-sm">Word document ready!</p>
+                  <a id="wordDownloadBtn" href="#" download="document.docx" class="w-full py-2.5 px-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-download"></i>
+                    <span>Download Word File</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. PDF TO EXCEL PANEL (NEW) -->
+        <div id="panel-pdf-to-excel" class="tool-panel hidden">
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="lg:col-span-2 space-y-6">
+              <div id="excelDropzone" class="dropzone relative border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-emerald-500 rounded-3xl p-10 text-center bg-white/70 dark:bg-slate-900/70 backdrop-blur-sm transition-all cursor-pointer shadow-sm group">
+                <input type="file" id="excelFileInput" accept="application/pdf" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                <div class="space-y-4 pointer-events-none">
+                  <div class="w-16 h-16 mx-auto rounded-2xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 flex items-center justify-center text-3xl group-hover:scale-105 transition-transform">
+                    <i class="fa-solid fa-file-excel"></i>
+                  </div>
+                  <div>
+                    <p class="text-lg font-bold text-slate-800 dark:text-slate-200">
+                      <span>Drop PDF file here or</span> <span class="text-emerald-600 underline">browse</span>
+                    </p>
+                    <p class="text-xs text-slate-500 mt-1">Extracts tabular rows & columns into genuine Microsoft Excel (.xlsx)</p>
+                  </div>
+                </div>
+              </div>
+              <div id="excelPreviewCard" class="hidden bg-white/80 dark:bg-slate-900/80 rounded-3xl p-5 border space-y-3">
+                <div class="flex justify-between items-center pb-2 border-b">
+                  <span id="excelPdfName" class="font-bold text-sm"></span>
+                  <button onclick="clearExcelPdf()" class="text-xs text-red-600 border border-red-200 px-3 py-1 rounded-xl">Change File</button>
+                </div>
+                <div id="excelTablePreview" class="max-h-60 overflow-x-auto overflow-y-auto text-xs font-mono border rounded-xl p-2 bg-slate-50 dark:bg-slate-800"></div>
+              </div>
+            </div>
+            <div class="space-y-4">
+              <div class="bg-white/80 dark:bg-slate-900/80 rounded-3xl p-6 border space-y-5">
+                <h3 class="font-bold text-base">Excel Options</h3>
+                <div>
+                  <label class="text-xs font-semibold text-slate-600">Output Format</label>
+                  <select id="excelFormatSelect" class="w-full bg-slate-50 dark:bg-slate-800 border rounded-xl px-3 py-2 text-sm mt-1">
+                    <option value="xlsx" selected>Excel Workbook (.xlsx)</option>
+                    <option value="csv">Comma Separated (.csv)</option>
+                  </select>
+                </div>
+                <button id="convertExcelBtn" onclick="processPdfToExcel()" disabled class="w-full py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-md disabled:opacity-50 flex items-center justify-center space-x-2">
+                  <i class="fa-solid fa-file-excel"></i>
+                  <span>Convert to Excel (.xlsx)</span>
+                </button>
+                <div id="excelSuccessBox" class="hidden p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 text-center space-y-3">
+                  <p class="font-bold text-emerald-700 text-sm">Excel file ready!</p>
+                  <a id="excelDownloadBtn" href="#" download="spreadsheet.xlsx" class="w-full py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-download"></i>
+                    <span>Download Excel File</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. PDF TO POWERPOINT PANEL (NEW) -->
+        <div id="panel-pdf-to-pptx" class="tool-panel hidden">
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="lg:col-span-2 space-y-6">
+              <div id="pptxDropzone" class="dropzone relative border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-orange-500 rounded-3xl p-10 text-center bg-white/70 dark:bg-slate-900/70 backdrop-blur-sm transition-all cursor-pointer shadow-sm group">
+                <input type="file" id="pptxFileInput" accept="application/pdf" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                <div class="space-y-4 pointer-events-none">
+                  <div class="w-16 h-16 mx-auto rounded-2xl bg-orange-50 dark:bg-orange-950/60 text-orange-600 flex items-center justify-center text-3xl group-hover:scale-105 transition-transform">
+                    <i class="fa-solid fa-file-powerpoint"></i>
+                  </div>
+                  <div>
+                    <p class="text-lg font-bold text-slate-800 dark:text-slate-200">
+                      <span>Drop PDF file here or</span> <span class="text-orange-600 underline">browse</span>
+                    </p>
+                    <p class="text-xs text-slate-500 mt-1">Converts all PDF pages into Microsoft PowerPoint (.pptx) presentation slides</p>
+                  </div>
+                </div>
+              </div>
+              <div id="pptxPreviewCard" class="hidden bg-white/80 dark:bg-slate-900/80 rounded-3xl p-5 border space-y-3">
+                <div class="flex justify-between items-center pb-2 border-b">
+                  <span id="pptxPdfName" class="font-bold text-sm"></span>
+                  <span id="pptxSlideCount" class="text-xs text-orange-600 font-bold"></span>
+                </div>
+              </div>
+            </div>
+            <div class="space-y-4">
+              <div class="bg-white/80 dark:bg-slate-900/80 rounded-3xl p-6 border space-y-5">
+                <h3 class="font-bold text-base">PowerPoint Options</h3>
+                <div>
+                  <label class="text-xs font-semibold text-slate-600">Slide Ratio</label>
+                  <select id="pptxLayoutSelect" class="w-full bg-slate-50 dark:bg-slate-800 border rounded-xl px-3 py-2 text-sm mt-1">
+                    <option value="16x9" selected>Widescreen (16:9)</option>
+                    <option value="4x3">Standard (4:3)</option>
+                  </select>
+                </div>
+                <button id="convertPptxBtn" onclick="processPdfToPptx()" disabled class="w-full py-3.5 rounded-2xl bg-orange-600 hover:bg-orange-700 text-white font-bold text-sm shadow-md disabled:opacity-50 flex items-center justify-center space-x-2">
+                  <i class="fa-solid fa-file-powerpoint"></i>
+                  <span>Convert to PPTX</span>
+                </button>
+                <div id="pptxSuccessBox" class="hidden p-4 rounded-2xl bg-orange-50 dark:bg-orange-950/50 border border-orange-200 text-center space-y-3">
+                  <p class="font-bold text-orange-700 text-sm">PowerPoint slides ready!</p>
+                  <a id="pptxDownloadBtn" href="#" download="presentation.pptx" class="w-full py-2.5 px-3 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-bold text-xs flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-download"></i>
+                    <span>Download PowerPoint (.pptx)</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. PDF TO TEXT / HTML PANEL (NEW) -->
+        <div id="panel-pdf-to-text" class="tool-panel hidden">
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="lg:col-span-2 space-y-6">
+              <div id="textDropzone" class="dropzone relative border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-slate-500 rounded-3xl p-10 text-center bg-white/70 dark:bg-slate-900/70 backdrop-blur-sm transition-all cursor-pointer shadow-sm group">
+                <input type="file" id="textFileInput" accept="application/pdf" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                <div class="space-y-4 pointer-events-none">
+                  <div class="w-16 h-16 mx-auto rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 flex items-center justify-center text-3xl group-hover:scale-105 transition-transform">
+                    <i class="fa-solid fa-file-code"></i>
+                  </div>
+                  <div>
+                    <p class="text-lg font-bold text-slate-800 dark:text-slate-200">
+                      <span>Drop PDF file here or</span> <span class="text-brand-600 underline">browse</span>
+                    </p>
+                    <p class="text-xs text-slate-500 mt-1">Extract clean plain text (.txt) or formatted HTML code</p>
+                  </div>
+                </div>
+              </div>
+              <div id="textPreviewCard" class="hidden bg-white/80 dark:bg-slate-900/80 rounded-3xl p-5 border space-y-3">
+                <textarea id="textResultArea" rows="10" class="w-full bg-slate-50 dark:bg-slate-800 border rounded-xl p-3 font-mono text-xs"></textarea>
+              </div>
+            </div>
+            <div class="space-y-4">
+              <div class="bg-white/80 dark:bg-slate-900/80 rounded-3xl p-6 border space-y-5">
+                <h3 class="font-bold text-base">Extraction Options</h3>
+                <div class="space-y-2">
+                  <label class="flex items-center space-x-2 text-xs font-semibold cursor-pointer">
+                    <input type="radio" name="textExtractType" value="txt" checked class="text-brand-600">
+                    <span>Plain Text (.txt)</span>
+                  </label>
+                  <label class="flex items-center space-x-2 text-xs font-semibold cursor-pointer">
+                    <input type="radio" name="textExtractType" value="html" class="text-brand-600">
+                    <span>Web HTML Document (.html)</span>
+                  </label>
+                </div>
+                <button id="extractTextBtn" onclick="processPdfToText()" disabled class="w-full py-3.5 rounded-2xl bg-slate-800 hover:bg-slate-900 text-white font-bold text-sm shadow-md disabled:opacity-50 flex items-center justify-center space-x-2">
+                  <i class="fa-solid fa-download"></i>
+                  <span>Extract & Download</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. WORD / EXCEL / TEXT TO PDF PANEL (NEW) -->
+        <div id="panel-office-to-pdf" class="tool-panel hidden">
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="lg:col-span-2 space-y-6">
+              <div id="officeDropzone" class="dropzone relative border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-indigo-500 rounded-3xl p-10 text-center bg-white/70 dark:bg-slate-900/70 backdrop-blur-sm transition-all cursor-pointer shadow-sm group">
+                <input type="file" id="officeFileInput" accept=".docx,.xlsx,.csv,.txt,.html" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                <div class="space-y-4 pointer-events-none">
+                  <div class="w-16 h-16 mx-auto rounded-2xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 flex items-center justify-center text-3xl group-hover:scale-105 transition-transform">
+                    <i class="fa-solid fa-file-import"></i>
+                  </div>
+                  <div>
+                    <p class="text-lg font-bold text-slate-800 dark:text-slate-200">
+                      <span>Drop Word (.docx), Excel (.xlsx), or Text (.txt) here</span>
+                    </p>
+                    <p class="text-xs text-slate-500 mt-1">Converts documents into standard A4 PDF files right in your browser</p>
+                  </div>
+                </div>
+              </div>
+              <div id="officePreviewCard" class="hidden bg-white/80 dark:bg-slate-900/80 rounded-3xl p-5 border space-y-3">
+                <span id="officeFileName" class="font-bold text-sm"></span>
+                <div id="officePreviewBox" class="max-h-56 overflow-y-auto bg-slate-50 dark:bg-slate-800 p-3 rounded-xl text-xs font-mono"></div>
+              </div>
+            </div>
+            <div class="space-y-4">
+              <div class="bg-white/80 dark:bg-slate-900/80 rounded-3xl p-6 border space-y-5">
+                <h3 class="font-bold text-base">PDF Conversion</h3>
+                <button id="convertOfficeBtn" onclick="processOfficeToPdf()" disabled class="w-full py-3.5 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm shadow-md disabled:opacity-50 flex items-center justify-center space-x-2">
+                  <i class="fa-solid fa-file-pdf"></i>
+                  <span>Generate PDF</span>
+                </button>
+                <div id="officeSuccessBox" class="hidden p-4 rounded-2xl bg-indigo-50 dark:bg-indigo-950/50 border border-indigo-200 text-center space-y-3">
+                  <p class="font-bold text-indigo-700 text-sm">PDF generated successfully!</p>
+                  <a id="officeDownloadBtn" href="#" download="document.pdf" class="w-full py-2.5 px-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-download"></i>
+                    <span>Download PDF</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 6. ORGANIZE & DELETE PAGES PANEL (NEW) -->
+        <div id="panel-organize-pdf" class="tool-panel hidden">
+          <div class="space-y-6">
+            <div id="organizeDropzone" class="dropzone relative border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-rose-500 rounded-3xl p-8 text-center bg-white/70 dark:bg-slate-900/70 backdrop-blur-sm transition-all cursor-pointer shadow-sm group">
+              <input type="file" id="organizeFileInput" accept="application/pdf" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+              <div class="space-y-3 pointer-events-none">
+                <div class="w-14 h-14 mx-auto rounded-2xl bg-rose-50 dark:bg-rose-950/60 text-rose-600 flex items-center justify-center text-2xl group-hover:scale-105 transition-transform">
+                  <i class="fa-solid fa-arrows-up-down-left-right"></i>
+                </div>
+                <p class="text-base font-bold text-slate-800 dark:text-slate-200">
+                  <span>Drop PDF to delete or reorder pages</span>
+                </p>
+              </div>
+            </div>
+
+            <div id="organizePreviewCard" class="hidden bg-white/80 dark:bg-slate-900/80 rounded-3xl p-6 border space-y-4">
+              <div class="flex justify-between items-center pb-3 border-b">
+                <div>
+                  <h4 id="organizeDocName" class="font-bold text-sm"></h4>
+                  <p class="text-xs text-slate-500">Click the trash icon to delete a page, or arrows to move it.</p>
+                </div>
+                <button id="saveOrganizedBtn" onclick="processOrganizePdf()" class="py-2.5 px-5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs shadow-md">
+                  <i class="fa-solid fa-floppy-disk mr-1"></i> Save & Download PDF
+                </button>
+              </div>
+              <div id="organizePagesGrid" class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-4 max-h-[500px] overflow-y-auto p-1"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 7. PASSWORD PROTECT PDF PANEL (NEW) -->
+        <div id="panel-protect-pdf" class="tool-panel hidden">
+          <div class="max-w-xl mx-auto space-y-6">
+            <div id="protectDropzone" class="dropzone relative border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-emerald-500 rounded-3xl p-8 text-center bg-white/70 dark:bg-slate-900/70 backdrop-blur-sm transition-all cursor-pointer shadow-sm group">
+              <input type="file" id="protectFileInput" accept="application/pdf" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+              <div class="space-y-3 pointer-events-none">
+                <div class="w-14 h-14 mx-auto rounded-2xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 flex items-center justify-center text-2xl group-hover:scale-105 transition-transform">
+                  <i class="fa-solid fa-lock"></i>
+                </div>
+                <p class="text-base font-bold text-slate-800 dark:text-slate-200">
+                  <span>Drop PDF file to password protect</span>
+                </p>
+              </div>
+            </div>
+
+            <div id="protectSettingsCard" class="hidden bg-white/80 dark:bg-slate-900/80 rounded-3xl p-6 border space-y-4">
+              <span id="protectDocName" class="font-bold text-sm block"></span>
+              <div>
+                <label class="text-xs font-semibold text-slate-600">Enter Document Password</label>
+                <input type="password" id="protectPasswordInput" placeholder="Enter strong password..." class="w-full bg-slate-50 dark:bg-slate-800 border rounded-xl px-3 py-2 text-sm mt-1">
+              </div>
+              <button id="runProtectBtn" onclick="processProtectPdf()" class="w-full py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-md">
+                <i class="fa-solid fa-lock mr-1"></i> Protect & Download PDF
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 8. IMAGE FORMAT CONVERTER PANEL (JPG/PNG/WebP/BMP) (NEW) -->
+        <div id="panel-convert-image" class="tool-panel hidden">
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="lg:col-span-2 space-y-6">
+              <div id="imgConvDropzone" class="dropzone relative border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-cyan-500 rounded-3xl p-10 text-center bg-white/70 dark:bg-slate-900/70 backdrop-blur-sm transition-all cursor-pointer shadow-sm group">
+                <input type="file" id="imgConvFileInput" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                <div class="space-y-4 pointer-events-none">
+                  <div class="w-16 h-16 mx-auto rounded-2xl bg-cyan-50 dark:bg-cyan-950/60 text-cyan-600 flex items-center justify-center text-3xl group-hover:scale-105 transition-transform">
+                    <i class="fa-solid fa-repeat"></i>
+                  </div>
+                  <div>
+                    <p class="text-lg font-bold text-slate-800 dark:text-slate-200">
+                      <span>Drop any image (JPG, PNG, WebP, GIF, BMP) here</span>
+                    </p>
+                    <p class="text-xs text-slate-500 mt-1">Convert instantly to any image format with zero quality loss</p>
+                  </div>
+                </div>
+              </div>
+              <div id="imgConvPreviewCard" class="hidden bg-white/80 dark:bg-slate-900/80 rounded-3xl p-5 border flex items-center justify-center">
+                <img id="imgConvPreviewImg" src="" alt="Preview" class="max-h-60 rounded-xl object-contain">
+              </div>
+            </div>
+            <div class="space-y-4">
+              <div class="bg-white/80 dark:bg-slate-900/80 rounded-3xl p-6 border space-y-5">
+                <h3 class="font-bold text-base">Target Format</h3>
+                <div class="grid grid-cols-2 gap-2">
+                  <button type="button" onclick="setImgConvTarget('image/jpeg')" id="btn-ic-jpeg" class="ic-fmt-btn active py-2 text-xs font-bold rounded-xl border border-cyan-500 bg-cyan-50 text-cyan-700 dark:bg-cyan-950/60 dark:text-cyan-300">JPG</button>
+                  <button type="button" onclick="setImgConvTarget('image/png')" id="btn-ic-png" class="ic-fmt-btn py-2 text-xs font-bold rounded-xl border">PNG</button>
+                  <button type="button" onclick="setImgConvTarget('image/webp')" id="btn-ic-webp" class="ic-fmt-btn py-2 text-xs font-bold rounded-xl border">WebP</button>
+                  <button type="button" onclick="setImgConvTarget('image/bmp')" id="btn-ic-bmp" class="ic-fmt-btn py-2 text-xs font-bold rounded-xl border">BMP</button>
+                </div>
+                <button id="convertImgBtn" onclick="processImageFormatConversion()" disabled class="w-full py-3.5 rounded-2xl bg-cyan-600 hover:bg-cyan-700 text-white font-bold text-sm shadow-md disabled:opacity-50">
+                  <i class="fa-solid fa-repeat mr-1"></i> Convert & Download
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 9. RESIZE & CROP IMAGE PANEL (NEW) -->
+        <div id="panel-resize-image" class="tool-panel hidden">
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="lg:col-span-2 space-y-6">
+              <div id="resizeDropzone" class="dropzone relative border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-violet-500 rounded-3xl p-10 text-center bg-white/70 dark:bg-slate-900/70 backdrop-blur-sm transition-all cursor-pointer shadow-sm group">
+                <input type="file" id="resizeFileInput" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                <div class="space-y-4 pointer-events-none">
+                  <div class="w-16 h-16 mx-auto rounded-2xl bg-violet-50 dark:bg-violet-950/60 text-violet-600 flex items-center justify-center text-3xl group-hover:scale-105 transition-transform">
+                    <i class="fa-solid fa-crop-simple"></i>
+                  </div>
+                  <div>
+                    <p class="text-lg font-bold text-slate-800 dark:text-slate-200">
+                      <span>Drop image to resize or crop</span>
+                    </p>
+                    <p class="text-xs text-slate-500 mt-1">Specify custom width, height, or aspect ratios</p>
+                  </div>
+                </div>
+              </div>
+              <div id="resizePreviewCard" class="hidden bg-white/80 dark:bg-slate-900/80 rounded-3xl p-5 border flex flex-col items-center">
+                <img id="resizePreviewImg" src="" alt="Resize Preview" class="max-h-60 rounded-xl object-contain mb-2">
+                <span id="resizeDimTag" class="text-xs font-bold text-slate-500"></span>
+              </div>
+            </div>
+            <div class="space-y-4">
+              <div class="bg-white/80 dark:bg-slate-900/80 rounded-3xl p-6 border space-y-4">
+                <h3 class="font-bold text-base">Dimensions (Pixels)</h3>
+                <div class="grid grid-cols-2 gap-3">
+                  <div>
+                    <label class="text-xs font-semibold text-slate-500">Width (px)</label>
+                    <input type="number" id="resizeWidthInput" class="w-full bg-slate-50 dark:bg-slate-800 border rounded-xl px-3 py-2 text-sm mt-1">
+                  </div>
+                  <div>
+                    <label class="text-xs font-semibold text-slate-500">Height (px)</label>
+                    <input type="number" id="resizeHeightInput" class="w-full bg-slate-50 dark:bg-slate-800 border rounded-xl px-3 py-2 text-sm mt-1">
+                  </div>
+                </div>
+                <div class="flex items-center space-x-2">
+                  <input type="checkbox" id="resizeKeepRatio" checked class="rounded text-violet-600">
+                  <label for="resizeKeepRatio" class="text-xs font-semibold text-slate-600 dark:text-slate-300">Maintain Aspect Ratio</label>
+                </div>
+                <button id="runResizeBtn" onclick="processImageResize()" disabled class="w-full py-3.5 rounded-2xl bg-violet-600 hover:bg-violet-700 text-white font-bold text-sm shadow-md disabled:opacity-50">
+                  <i class="fa-solid fa-arrows-maximize mr-1"></i> Resize & Download
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 10. REMOVE BACKGROUND PANEL (NEW) -->
+        <div id="panel-remove-bg" class="tool-panel hidden">
+          <div class="max-w-2xl mx-auto space-y-6">
+            <div id="removeBgDropzone" class="dropzone relative border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-pink-500 rounded-3xl p-10 text-center bg-white/70 dark:bg-slate-900/70 backdrop-blur-sm transition-all cursor-pointer shadow-sm group">
+              <input type="file" id="removeBgFileInput" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+              <div class="space-y-4 pointer-events-none">
+                <div class="w-16 h-16 mx-auto rounded-2xl bg-pink-50 dark:bg-pink-950/60 text-pink-600 flex items-center justify-center text-3xl group-hover:scale-105 transition-transform">
+                  <i class="fa-solid fa-wand-magic-sparkles"></i>
+                </div>
+                <div>
+                  <p class="text-lg font-bold text-slate-800 dark:text-slate-200">
+                    <span>Drop image to make background transparent</span>
+                  </p>
+                  <p class="text-xs text-slate-500 mt-1">Converts solid/white backgrounds to transparent PNG (perfect for signatures & logos)</p>
+                </div>
+              </div>
+            </div>
+            <div id="removeBgPreviewCard" class="hidden bg-white/80 dark:bg-slate-900/80 rounded-3xl p-6 border space-y-4 text-center">
+              <div class="h-60 bg-[repeating-conic-gradient(#cbd5e1_0%_25%,#f1f5f9_0%_50%)] bg-[length:16px_16px] rounded-2xl p-4 flex items-center justify-center">
+                <canvas id="removeBgCanvas" class="max-h-full max-w-full rounded"></canvas>
+              </div>
+              <button onclick="downloadTransparentPng()" class="py-3 px-6 rounded-2xl bg-pink-600 hover:bg-pink-700 text-white font-bold text-sm shadow-md">
+                <i class="fa-solid fa-download mr-1"></i> Download Transparent PNG
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 11. VIDEO TO AUDIO PANEL (NEW) -->
+        <div id="panel-video-to-audio" class="tool-panel hidden">
+          <div class="max-w-xl mx-auto space-y-6">
+            <div id="videoDropzone" class="dropzone relative border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-fuchsia-500 rounded-3xl p-10 text-center bg-white/70 dark:bg-slate-900/70 backdrop-blur-sm transition-all cursor-pointer shadow-sm group">
+              <input type="file" id="videoFileInput" accept="video/mp4,video/webm,video/ogg" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+              <div class="space-y-4 pointer-events-none">
+                <div class="w-16 h-16 mx-auto rounded-2xl bg-fuchsia-50 dark:bg-fuchsia-950/60 text-fuchsia-600 flex items-center justify-center text-3xl group-hover:scale-105 transition-transform">
+                  <i class="fa-solid fa-music"></i>
+                </div>
+                <div>
+                  <p class="text-lg font-bold text-slate-800 dark:text-slate-200">
+                    <span>Drop MP4 / WebM video file here</span>
+                  </p>
+                  <p class="text-xs text-slate-500 mt-1">Extracts audio directly via client-side Web Audio API without uploading</p>
+                </div>
+              </div>
+            </div>
+            <div id="videoPreviewCard" class="hidden bg-white/80 dark:bg-slate-900/80 rounded-3xl p-6 border space-y-4 text-center">
+              <span id="videoFileName" class="font-bold text-sm block"></span>
+              <button id="extractAudioBtn" onclick="processVideoToAudio()" class="w-full py-3.5 rounded-2xl bg-fuchsia-600 hover:bg-fuchsia-700 text-white font-bold text-sm shadow-md">
+                <i class="fa-solid fa-headphones mr-1"></i> Extract & Download Audio (.wav)
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 12. MERGE PDF PANEL -->
+        <div id="panel-merge-pdf" class="tool-panel hidden">
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="lg:col-span-2 space-y-6">
+              <div id="mergeDropzone" class="dropzone relative border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-brand-500 rounded-3xl p-8 text-center bg-white/70 dark:bg-slate-900/70 backdrop-blur-sm transition-all cursor-pointer shadow-sm group">
+                <input type="file" id="mergeFileInput" multiple accept="application/pdf" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                <div class="space-y-4 pointer-events-none">
+                  <div class="w-16 h-16 mx-auto rounded-2xl bg-indigo-50 dark:bg-indigo-950/60 text-brand-600 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
+                    <i class="fa-solid fa-layer-group"></i>
+                  </div>
+                  <div>
+                    <p class="text-lg font-semibold text-slate-800 dark:text-slate-200">
+                      <span>Drop PDF files here or</span> <span class="text-brand-600 underline">browse</span>
+                    </p>
+                    <p class="text-xs text-slate-500 mt-1">Select multiple PDF files to combine into a single document</p>
+                  </div>
+                </div>
+              </div>
+              <div id="mergeListContainer" class="hidden bg-white/80 dark:bg-slate-900/80 backdrop-blur-md rounded-3xl p-6 border space-y-4">
+                <div class="flex justify-between items-center pb-3 border-b">
+                  <span class="font-bold text-sm">Selected PDFs (<span id="mergeCount">0</span>)</span>
+                  <div class="flex space-x-2">
+                    <button onclick="document.getElementById('mergeFileInput').click()" class="text-xs border px-3 py-1 rounded-xl">Add More</button>
+                    <button onclick="clearMergeList()" class="text-xs text-red-600 border border-red-200 px-3 py-1 rounded-xl">Clear All</button>
+                  </div>
+                </div>
+                <div id="mergePdfList" class="space-y-2 max-h-[350px] overflow-y-auto"></div>
+              </div>
+            </div>
+            <div class="space-y-4">
+              <div class="bg-white/80 dark:bg-slate-900/80 rounded-3xl p-6 border space-y-4">
+                <h3 class="font-bold text-base">Merge Options</h3>
+                <input type="text" id="mergeOutputName" value="merged-document" class="w-full bg-slate-50 dark:bg-slate-800 border rounded-xl px-3 py-2 text-sm">
+                <button id="runMergeBtn" onclick="processPdfMerge()" disabled class="w-full py-3.5 rounded-2xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-sm shadow-md disabled:opacity-50">
+                  <i class="fa-solid fa-layer-group mr-1"></i> Merge PDFs
+                </button>
+                <div id="mergeSuccessBox" class="hidden p-4 rounded-2xl bg-brand-50 dark:bg-brand-950/50 border text-center space-y-3">
+                  <p class="font-bold text-brand-700 text-sm">PDFs merged successfully!</p>
+                  <a id="mergeDownloadBtn" href="#" download="merged.pdf" class="w-full py-2.5 px-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-download"></i>
+                    <span>Download Merged PDF</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 13. SPLIT PDF PANEL -->
+        <div id="panel-split-pdf" class="tool-panel hidden">
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="lg:col-span-2 space-y-6">
+              <div id="splitDropzone" class="dropzone relative border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-amber-500 rounded-3xl p-8 text-center bg-white/70 dark:bg-slate-900/70 backdrop-blur-sm transition-all cursor-pointer shadow-sm group">
+                <input type="file" id="splitFileInput" accept="application/pdf" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                <div class="space-y-4 pointer-events-none">
+                  <div class="w-16 h-16 mx-auto rounded-2xl bg-amber-50 dark:bg-amber-950/60 text-amber-600 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
+                    <i class="fa-solid fa-scissors"></i>
+                  </div>
+                  <p class="text-base font-bold text-slate-800 dark:text-slate-200">Select PDF to split pages</p>
+                </div>
+              </div>
+              <div id="splitPreviewCard" class="hidden bg-white/80 dark:bg-slate-900/80 rounded-3xl p-5 border space-y-3">
+                <div class="flex justify-between items-center pb-2 border-b">
+                  <span id="splitDocName" class="font-bold text-sm"></span>
+                  <button onclick="clearSplitDoc()" class="text-xs text-red-600 border border-red-200 px-3 py-1 rounded-xl">Remove</button>
+                </div>
+                <div id="splitThumbnailsGrid" class="grid grid-cols-3 sm:grid-cols-6 gap-2 max-h-[350px] overflow-y-auto"></div>
+              </div>
+            </div>
+            <div class="space-y-4">
+              <div class="bg-white/80 dark:bg-slate-900/80 rounded-3xl p-6 border space-y-4">
+                <h3 class="font-bold text-base">Split Range</h3>
+                <input type="text" id="splitPageRangeInput" placeholder="e.g. 1-3, 5" class="w-full bg-slate-50 dark:bg-slate-800 border rounded-xl px-3 py-2 text-sm">
+                <button id="runSplitBtn" onclick="processPdfSplit()" disabled class="w-full py-3.5 rounded-2xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-sm shadow-md disabled:opacity-50">
+                  <i class="fa-solid fa-scissors mr-1"></i> Split PDF
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 14. ROTATE PDF PANEL -->
+        <div id="panel-rotate-pdf" class="tool-panel hidden">
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="lg:col-span-2 space-y-6">
+              <div id="rotateDropzone" class="dropzone relative border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-teal-500 rounded-3xl p-8 text-center bg-white/70 dark:bg-slate-900/70 backdrop-blur-sm transition-all cursor-pointer shadow-sm group">
+                <input type="file" id="rotateFileInput" accept="application/pdf" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                <div class="space-y-3 pointer-events-none">
+                  <div class="w-14 h-14 mx-auto rounded-2xl bg-teal-50 dark:bg-teal-950/60 text-teal-600 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
+                    <i class="fa-solid fa-rotate"></i>
+                  </div>
+                  <p class="text-base font-bold text-slate-800 dark:text-slate-200">Drop PDF to rotate pages</p>
+                </div>
+              </div>
+              <div id="rotatePreviewCard" class="hidden bg-white/80 dark:bg-slate-900/80 rounded-3xl p-5 border space-y-3">
+                <div class="flex justify-between items-center pb-2 border-b">
+                  <span id="rotateDocName" class="font-bold text-sm"></span>
+                  <button onclick="rotateAllPages(90)" class="text-xs px-3 py-1 rounded-xl bg-teal-50 text-teal-700 font-bold border border-teal-200">Rotate All +90°</button>
+                </div>
+                <div id="rotatePagesGrid" class="grid grid-cols-2 sm:grid-cols-4 gap-3 max-h-[450px] overflow-y-auto"></div>
+              </div>
+            </div>
+            <div class="space-y-4">
+              <div class="bg-white/80 dark:bg-slate-900/80 rounded-3xl p-6 border space-y-4">
+                <h3 class="font-bold text-base">Rotate Options</h3>
+                <button id="runRotateBtn" onclick="processPdfRotation()" disabled class="w-full py-3.5 rounded-2xl bg-teal-600 hover:bg-teal-700 text-white font-bold text-sm shadow-md disabled:opacity-50">
+                  <i class="fa-solid fa-floppy-disk mr-1"></i> Save Rotated PDF
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 15. WATERMARK PDF PANEL -->
+        <div id="panel-watermark-pdf" class="tool-panel hidden">
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="lg:col-span-2 space-y-6">
+              <div id="watermarkDropzone" class="dropzone relative border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-pink-500 rounded-3xl p-8 text-center bg-white/70 dark:bg-slate-900/70 backdrop-blur-sm transition-all cursor-pointer shadow-sm group">
+                <input type="file" id="watermarkFileInput" accept="application/pdf" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                <div class="space-y-3 pointer-events-none">
+                  <div class="w-14 h-14 mx-auto rounded-2xl bg-pink-50 dark:bg-pink-950/60 text-pink-600 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
+                    <i class="fa-solid fa-stamp"></i>
+                  </div>
+                  <p class="text-base font-bold text-slate-800 dark:text-slate-200">Drop PDF to add Watermark or Numbers</p>
+                </div>
+              </div>
+              <div id="watermarkPreviewCard" class="hidden bg-white/80 dark:bg-slate-900/80 rounded-3xl p-5 border flex items-center justify-center">
+                <canvas id="watermarkPreviewCanvas" class="max-h-72 max-w-full rounded shadow"></canvas>
+              </div>
+            </div>
+            <div class="space-y-4">
+              <div class="bg-white/80 dark:bg-slate-900/80 rounded-3xl p-6 border space-y-4">
+                <h3 class="font-bold text-base">Watermark Settings</h3>
+                <input type="text" id="watermarkTextInput" value="CONFIDENTIAL" class="w-full bg-slate-50 dark:bg-slate-800 border rounded-xl px-3 py-2 text-sm font-bold">
+                <div class="flex items-center space-x-2">
+                  <input type="checkbox" id="addPageNumbersCheckbox" checked class="rounded text-brand-600">
+                  <label for="addPageNumbersCheckbox" class="text-xs font-bold text-slate-600 dark:text-slate-300">Add Page Numbers (Bottom)</label>
+                </div>
+                <button id="runWatermarkBtn" onclick="processPdfWatermark()" disabled class="w-full py-3.5 rounded-2xl bg-pink-600 hover:bg-pink-700 text-white font-bold text-sm shadow-md disabled:opacity-50">
+                  <i class="fa-solid fa-stamp mr-1"></i> Apply & Download
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 16. JPG TO PDF PANEL -->
+        <div id="panel-jpg-to-pdf" class="tool-panel hidden">
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="lg:col-span-2 space-y-6">
+              <div id="jpgDropzone" class="dropzone relative border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-brand-500 rounded-3xl p-8 text-center bg-white/70 dark:bg-slate-900/70 backdrop-blur-sm transition-all cursor-pointer shadow-sm group">
+                <input type="file" id="jpgFileInput" multiple accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                <div class="space-y-3 pointer-events-none">
+                  <div class="w-14 h-14 mx-auto rounded-2xl bg-red-50 dark:bg-red-950/60 text-red-500 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
+                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                  </div>
+                  <p class="text-base font-bold text-slate-800 dark:text-slate-200">Drop images here or browse</p>
+                </div>
+              </div>
+              <div id="jpgPreviewContainer" class="hidden bg-white/80 dark:bg-slate-900/80 rounded-3xl p-5 border space-y-3">
+                <div class="flex justify-between items-center pb-2 border-b">
+                  <span class="font-bold text-sm">Selected Images (<span id="jpgCount">0</span>)</span>
+                  <button onclick="clearJpgFiles()" class="text-xs text-red-600 border border-red-200 px-3 py-1 rounded-xl">Clear All</button>
+                </div>
+                <div id="jpgGrid" class="grid grid-cols-2 sm:grid-cols-4 gap-3 max-h-[400px] overflow-y-auto"></div>
+              </div>
+            </div>
+            <div class="space-y-4">
+              <div class="bg-white/80 dark:bg-slate-900/80 rounded-3xl p-6 border space-y-4">
+                <h3 class="font-bold text-base">PDF & Size Settings</h3>
+                <select id="jpgPageSize" class="w-full bg-slate-50 dark:bg-slate-800 border rounded-xl px-3 py-2 text-sm">
+                  <option value="a4" selected>A4 (Standard)</option>
+                  <option value="letter">US Letter</option>
+                  <option value="fit">Fit to Image Size</option>
+                </select>
+                <div class="space-y-2">
+                  <label class="text-xs font-semibold text-slate-500">Target Size (Optional)</label>
+                  <div class="flex space-x-2">
+                    <input type="number" id="jpgTargetValue" value="500" class="w-2/3 bg-slate-50 dark:bg-slate-800 border rounded-xl px-3 py-2 text-sm">
+                    <select id="jpgTargetUnit" class="w-1/3 bg-slate-50 dark:bg-slate-800 border rounded-xl px-2 py-2 text-sm">
+                      <option value="KB" selected>KB</option>
+                      <option value="MB">MB</option>
+                    </select>
+                  </div>
+                </div>
+                <button id="convertJpgBtn" onclick="processJpgToPdf()" disabled class="w-full py-3.5 rounded-2xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-sm shadow-md disabled:opacity-50">
+                  <i class="fa-solid fa-file-pdf mr-1"></i> Create PDF
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 17. PDF TO JPG PANEL -->
+        <div id="panel-pdf-to-jpg" class="tool-panel hidden">
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="lg:col-span-2 space-y-6">
+              <div id="pdfDropzone" class="dropzone relative border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-emerald-500 rounded-3xl p-8 text-center bg-white/70 dark:bg-slate-900/70 backdrop-blur-sm transition-all cursor-pointer shadow-sm group">
+                <input type="file" id="pdfFileInput" accept="application/pdf" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                <div class="space-y-3 pointer-events-none">
+                  <div class="w-14 h-14 mx-auto rounded-2xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
+                    <i class="fa-solid fa-file-image"></i>
+                  </div>
+                  <p class="text-base font-bold text-slate-800 dark:text-slate-200">Drop PDF to extract JPG / PNG</p>
+                </div>
+              </div>
+              <div id="pdfPagesContainer" class="hidden bg-white/80 dark:bg-slate-900/80 rounded-3xl p-5 border space-y-3">
+                <span id="pdfFileName" class="font-bold text-sm"></span>
+                <div id="pdfPagesGrid" class="grid grid-cols-2 sm:grid-cols-4 gap-3 max-h-[400px] overflow-y-auto"></div>
+              </div>
+            </div>
+            <div class="space-y-4">
+              <div class="bg-white/80 dark:bg-slate-900/80 rounded-3xl p-6 border space-y-4">
+                <h3 class="font-bold text-base">Image Resolution</h3>
+                <select id="pdfRenderScale" class="w-full bg-slate-50 dark:bg-slate-800 border rounded-xl px-3 py-2 text-sm">
+                  <option value="1">72 DPI (Web)</option>
+                  <option value="1.5" selected>110 DPI (Standard)</option>
+                  <option value="2">150 DPI (High Quality)</option>
+                  <option value="3">300 DPI (Ultra HD Print)</option>
+                </select>
+                <button id="extractPdfBtn" onclick="processPdfToJpg()" disabled class="w-full py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-md disabled:opacity-50">
+                  <i class="fa-solid fa-images mr-1"></i> Extract Images
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 18. IMAGE COMPRESSOR (KB/MB) PANEL -->
+        <div id="panel-compress-image" class="tool-panel hidden">
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="lg:col-span-2 space-y-6">
+              <div id="imgCompressDropzone" class="dropzone relative border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-cyan-500 rounded-3xl p-8 text-center bg-white/70 dark:bg-slate-900/70 backdrop-blur-sm transition-all cursor-pointer shadow-sm group">
+                <input type="file" id="imgCompressInput" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                <div class="space-y-3 pointer-events-none">
+                  <div class="w-14 h-14 mx-auto rounded-2xl bg-cyan-50 dark:bg-cyan-950/60 text-cyan-600 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
+                    <i class="fa-solid fa-sliders"></i>
+                  </div>
+                  <p class="text-base font-bold text-slate-800 dark:text-slate-200">Drop image here to tune file size</p>
+                </div>
+              </div>
+              <div id="imgCompareContainer" class="hidden bg-white/80 dark:bg-slate-900/80 rounded-3xl p-5 border space-y-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div class="p-3 border rounded-2xl bg-slate-50 dark:bg-slate-800/40 text-center space-y-2">
+                    <span class="text-xs font-bold text-slate-500">ORIGINAL: <span id="origImgSizeTag">0 KB</span></span>
+                    <img id="origImgPreview" src="" class="h-44 mx-auto object-contain">
+                  </div>
+                  <div class="p-3 border-2 border-cyan-500 rounded-2xl bg-cyan-50/20 text-center space-y-2">
+                    <span class="text-xs font-bold text-cyan-600">OPTIMIZED: <span id="compImgSizeTag">0 KB</span></span>
+                    <img id="compImgPreview" src="" class="h-44 mx-auto object-contain">
+                  </div>
+                </div>
+                <a id="compDownloadBtn" href="#" download="compressed.jpg" class="w-full py-3 rounded-2xl bg-cyan-600 hover:bg-cyan-700 text-white font-bold text-sm text-center block">
+                  <i class="fa-solid fa-download mr-1"></i> Download Compressed Photo
+                </a>
+              </div>
+            </div>
+            <div class="space-y-4">
+              <div class="bg-white/80 dark:bg-slate-900/80 rounded-3xl p-6 border space-y-4">
+                <h3 class="font-bold text-base">Target File Size</h3>
+                <div class="grid grid-cols-2 gap-2">
+                  <button type="button" onclick="setExactTarget(50, 'KB')" class="p-2 border rounded-xl text-xs font-bold hover:border-cyan-500 text-left">&lt; 50 KB (UPSC)</button>
+                  <button type="button" onclick="setExactTarget(20, 'KB')" class="p-2 border rounded-xl text-xs font-bold hover:border-cyan-500 text-left">&lt; 20 KB (Sign)</button>
+                  <button type="button" onclick="setExactTarget(100, 'KB')" class="p-2 border rounded-xl text-xs font-bold hover:border-cyan-500 text-left">100 KB</button>
+                  <button type="button" onclick="setExactTarget(200, 'KB')" class="p-2 border rounded-xl text-xs font-bold hover:border-cyan-500 text-left">200 KB</button>
+                </div>
+                <div class="flex space-x-2">
+                  <input type="number" id="exactTargetNumber" value="100" class="w-2/3 bg-slate-50 dark:bg-slate-800 border rounded-xl px-3 py-2 text-sm font-bold text-cyan-600">
+                  <select id="exactTargetUnit" class="w-1/3 bg-slate-50 dark:bg-slate-800 border rounded-xl px-2 py-2 text-sm font-semibold">
+                    <option value="KB" selected>KB</option>
+                    <option value="MB">MB</option>
+                  </select>
+                </div>
+                <button onclick="applyCompressTarget()" class="w-full py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-700 text-white font-bold text-xs">Apply Target Size</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 19. PDF COMPRESSOR PANEL -->
+        <div id="panel-compress-pdf" class="tool-panel hidden">
+          <div class="max-w-2xl mx-auto space-y-6">
+            <div id="pdfCompressDropzone" class="dropzone relative border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-purple-500 rounded-3xl p-10 text-center bg-white/70 dark:bg-slate-900/70 backdrop-blur-sm transition-all cursor-pointer shadow-sm group">
+              <input type="file" id="pdfCompressInput" accept="application/pdf" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+              <div class="space-y-3 pointer-events-none">
+                <div class="w-16 h-16 mx-auto rounded-2xl bg-purple-50 dark:bg-purple-950/60 text-purple-600 flex items-center justify-center text-3xl group-hover:scale-105 transition-transform">
+                  <i class="fa-solid fa-file-zipper"></i>
+                </div>
+                <p class="text-lg font-bold text-slate-800 dark:text-slate-200">Drop PDF to compress file size</p>
+              </div>
+            </div>
+            <div id="pdfCompressSettings" class="hidden bg-white/80 dark:bg-slate-900/80 rounded-3xl p-6 border space-y-4">
+              <span id="compPdfName" class="font-bold text-sm block"></span>
+              <div class="grid grid-cols-3 gap-2">
+                <label class="cursor-pointer">
+                  <input type="radio" name="pdfCompLevel" value="extreme" class="hidden peer">
+                  <div class="p-3 border rounded-xl text-center peer-checked:border-purple-600 peer-checked:bg-purple-50/50 text-xs font-bold">Extreme (~80%)</div>
+                </label>
+                <label class="cursor-pointer">
+                  <input type="radio" name="pdfCompLevel" value="recommended" checked class="hidden peer">
+                  <div class="p-3 border rounded-xl text-center peer-checked:border-purple-600 peer-checked:bg-purple-50/50 text-xs font-bold">Recommended (~50%)</div>
+                </label>
+                <label class="cursor-pointer">
+                  <input type="radio" name="pdfCompLevel" value="low" class="hidden peer">
+                  <div class="p-3 border rounded-xl text-center peer-checked:border-purple-600 peer-checked:bg-purple-50/50 text-xs font-bold">Low (~30%)</div>
+                </label>
+              </div>
+              <button id="runPdfCompressBtn" onclick="processPdfCompression()" class="w-full py-3.5 rounded-2xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-sm shadow-md">
+                <i class="fa-solid fa-compress mr-1"></i> Compress PDF
+              </button>
+              <div id="pdfCompSuccessBox" class="hidden p-4 rounded-2xl bg-purple-50 dark:bg-purple-950/50 border text-center space-y-3">
+                <span id="pdfCompAfterSize" class="font-bold text-purple-600 text-base"></span>
+                <a id="pdfCompDownloadLink" href="#" download="compressed.pdf" class="w-full py-2.5 px-3 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs flex items-center justify-center space-x-2">
+                  <i class="fa-solid fa-download"></i>
+                  <span>Download Compressed PDF</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="mt-auto border-t border-slate-200/80 dark:border-slate-800/80 bg-white/60 dark:bg-slate-900/60 backdrop-blur-md py-6 text-center text-xs text-slate-500 dark:text-slate-400">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <div class="flex items-center space-x-2">
+        <span class="font-bold text-slate-800 dark:text-slate-200">DocuFlow Studio</span>
+        <span>•</span>
+        <span data-i18n="footer_tagline">Universal Document & Image Processing Studio</span>
+      </div>
+      <div>
+        <span data-i18n="footer_privacy">Client-Side Architecture • 100% Private & Secure</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Toast Notification Container -->
+  <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col space-y-2 pointer-events-none"></div>
+
+  <!-- Custom Logic Scripts -->
+  <script src="app.js"></script>
+</body>
+</html>
