@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://YOUR_DOMAIN_OR_GITHUB_PAGES_URL/sitemap.xml
+Sitemap: https://pramodnagdeve11-cloud.github.io/convertflow/sitemap.xml
